@@ -3,9 +3,9 @@
 Welcome to the RealTech Innovations folder! This repository contains a collection of innovative projects where we leverage technology to solve real-world problems. Each project is stored in its own folder, consisting of a code file, a report file and a readme file.
 This document contains important information about this folder.
 
-## Code
+## Code (sweep)
 
-The `code` file contains the source code and implementation file for each project. You can explore the code and use it as a reference or as a starting point for your own implementations.
+The `sweep` file contains the source code and implementation file for each project. You can explore the code and use it as a reference or as a starting point for your own implementations.
 
 ## Report
 
