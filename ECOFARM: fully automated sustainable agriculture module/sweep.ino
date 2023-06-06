@@ -1,8 +1,15 @@
+#include <Servo.h>
+Servo myservo;
 int sensor1Pin = A0;
 int sensor2Pin = A1; 
 int sensor3Pin = A2;
+int LDR_PIN = A3;
 int pumpPin = 2;
 int buzzerPin = 2;
+int LED_PIN = 3;
+
+const int lm35Pin = A2;
+float temperature;
 
 int numReadings = 1;
 int sensor1Value = 0;
@@ -14,6 +21,7 @@ int high_threshold = 700;
 int low_threshold = 300;
 
 void setup() {
+  myservo.attach(7);
   pinMode(pumpPin, OUTPUT);
   pinMode(buzzerPin, OUTPUT);
   Serial.begin(9600);
@@ -56,10 +64,12 @@ void loop() {
   if (soilAverage < high_threshold && soilAverage > low_threshold) {
     digitalWrite(pumpPin, HIGH);
     Serial.println("Pump started");
+    myservo.write(90); // dam opened
   } 
   else {
     digitalWrite(pumpPin, LOW);
     Serial.println("Pump stopped");
+    myservo.write(90); // closed opened
   }
 
   // buzzer code
@@ -103,4 +113,23 @@ void loop() {
     digitalWrite(buzzerPin, HIGH); // continue
     delay(1000);
   }
+  // LDR
+  int lightLevel = analogRead(LDR_PIN);
+  // Serial.print("Light level: ");
+  // Serial.println(lightLevel);
+  if (lightLevel < 400) {
+    digitalWrite(LED_PIN, HIGH);
+  } 
+  else if (lightLevel > 400) {
+    digitalWrite(LED_PIN, LOW);
+    delay(200); 
+  }
+  // Temp
+  int sensorValue = analogRead(lm35Pin);
+  float millivolts = (sensorValue / 1024.0) * 5000;
+  temperature = millivolts / 10;
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.println("°C");
+  delay(200); 
 }
