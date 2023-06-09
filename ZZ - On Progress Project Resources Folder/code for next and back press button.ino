@@ -1,6 +1,5 @@
-
-
 // const int ledPin = 13;
+int i = 0;
 
 // forword botton
 int fbPin = 2;
@@ -28,8 +27,8 @@ void loop() {
 
   fbOn = readingpress(fbState, lastfbState, fbOn);
   bbOn = readingpress(bbState, lastbbState, bbOn);
-  // fbOn == true ? : ;
-  // bbOn == true ? : ;
+  fbOn == true ? i++ : i=i;
+  bbOn == true ? i-- : i=i;
   
   lastfbState = fbState;
   lastbbState = bbState;
@@ -48,6 +47,7 @@ bool readingpress(int NewbuttonState, int lastButtonState, bool buttonOn){
     }
     delay(50);
   }
-
+  return buttonOn;
+}
   return buttonOn;
 }
