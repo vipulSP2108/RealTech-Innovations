@@ -1,7 +1,9 @@
 import RPi.GPIO as GPIO
+import time
 from time import sleep
-from gpiozero import Servo
-from random import randint
+# from gpiozero import Servo
+import random
+import os
 
 fbPin = 2
 bbPin = 3
@@ -17,93 +19,151 @@ servo6Angle = 0
 i = 0
 oldi = 0
 
-# Initialize Servo Objects
-servo1 = Servo(5)
-servo2 = Servo(6)
-servo3 = Servo(7)
-servo4 = Servo(8)
-servo5 = Servo(9)
-servo6 = Servo(10)
+# servo1 = Servo(5)
+# servo2 = Servo(6)
+# servo3 = Servo(7)
+# servo4 = Servo(8)
+# servo5 = Servo(9)
+# servo6 = Servo(10)
 
-# Configure GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(fbPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(13, GPIO.OUT)
+GPIO.setup(13, GPIO.OUT) #LED
 GPIO.setup(bbPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(12, GPIO.OUT)
+GPIO.setup(12, GPIO.OUT) #LED
 GPIO.setup(testPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-GPIO.setup(11, GPIO.OUT)
+GPIO.setup(11, GPIO.OUT) #LED
 
-englishalpha = [['A'], ['B'], ['C']]
-english = [[0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 90], [0, 0, 0, 0, 90, 90]]
+GPIO.setup(5, GPIO.OUT)
+pwm1 = GPIO.PWM(5, 50)
+GPIO.setup(6, GPIO.OUT)
+pwm2 = GPIO.PWM(6, 50)
+GPIO.setup(7, GPIO.OUT)
+pwm3 = GPIO.PWM(7, 50)
+GPIO.setup(8, GPIO.OUT)
+pwm4 = GPIO.PWM(8, 50)
+GPIO.setup(9, GPIO.OUT)
+pwm5 = GPIO.PWM(9, 50)
+GPIO.setup(10, GPIO.OUT)
+pwm6 = GPIO.PWM(10, 50)
+# GPIO.setup(11, GPIO.OUT)
 
-def speak_next():
-    # Function to speak the next character
-    pass  # Replace this with your code to speak the character
+englishalpha = [['A']]
 
+english = [[90,0,0,0,0,0]]
+
+# servo
+def rotate_servo(angle):
+  duty_cycle = (angle / 18) + 2
+  return duty_cycle
+
+# speak
+def speak(spk):
+  command = 'say'
+  os.system(f'{command} {spk}')
+
+# train_mode
 def train_mode():
-    global i, oldi, servo1Angle, servo2Angle, servo3Angle, servo4Angle, servo5Angle, servo6Angle
+  global i, englishalpha
     
-    if GPIO.input(fbPin) == GPIO.HIGH:
-        GPIO.output(13, GPIO.HIGH)
-        i += 1
-        sleep(1)
-        speak_next()
-    else:
-        GPIO.output(13, GPIO.LOW)
+  if GPIO.input(fbPin) == GPIO.HIGH:
+    GPIO.output(13, GPIO.HIGH)
+    i += 1
+    sleep(1)
+    speak(f'next alphabet is {englishalpha[i]}')
+  else:
+    GPIO.output(13, GPIO.LOW)
     
-    if GPIO.input(bbPin) == GPIO.HIGH:
-        i -= 1
-        GPIO.output(12, GPIO.HIGH)
-        sleep(1)
-        speak_next()
-    else:
-        GPIO.output(12, GPIO.LOW)
+  if GPIO.input(bbPin) == GPIO.HIGH:
+    i -= 1
+    GPIO.output(12, GPIO.HIGH)
+    sleep(1)
+    speak(f'previous alphabet is {englishalpha[i]}')
+  else:
+    GPIO.output(12, GPIO.LOW)
+    
+  return i
+
+# test_mode
+def test_mode():
+  global englishalpha
+  rand = random.randint(26)
+  addsub = random.randint(26)
+  listx = [rand, rand+addsub, rand-addsub]
+  alpfaspeak = random(listx)
+  alpfashow = random(listx)
+  speak(f'alphabet is {englishalpha[alpfaspeak]}')
+  return alpfashow
+
+# main
+try:
+  f = open('output1.txt', 'r')
+  i = f.readline()
+  f.close()
+  
+  t = time.time()
+  while True:
+
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setmode(GPIO.BOARD)
     
     if GPIO.input(testPin) == GPIO.HIGH:
-        global test
-        if test == 1:
-            test = 0
-            GPIO.output(11, GPIO.HIGH)
-        else:
-            test = 1
-            GPIO.output(11, GPIO.LOW)
-        sleep(1)
-        speak_next()
-    
+      if test == 1:
+        test = 0
+        GPIO.output(11, GPIO.LOW) # train mode on light off
+        speak('train mode activated')
+      else:
+        test = 1
+        GPIO.output(11, GPIO.HIGH) # test mode on light on
+        speak('test mode activated')
+      sleep(1)
+          
     if test == 0:
-        servo1Angle = english[i][0]
-        servo2Angle = english[i][1]
-        servo3Angle = english[i][2]
-        servo4Angle = english[i][3]
-        servo5Angle = english[i][4]
-        servo6Angle = english[i][5]
-    else:
-        i = randint(0, 9)
-        print(i)
-        sleep(1)
+      # after every 10 sec voice comes
+      if t%10 == 0:
+        speak(f'your current alphabet is {englishalpha[i]}')
+      oldi = i
+      rota = train_mode()
     
-    print(servo6Angle)
+    if test == 1:
+      # after every 10 sec voice comes
+      if t%10 == 0:
+        speak(f'Identify the correct alphabet, is it {englishalpha[i]}')
+      oldi = i
+      rota = test_mode()
+
+    if oldi != rota:
+      servo1Angle = english[rota][0]
+      servo2Angle = english[rota][1]
+      servo3Angle = english[rota][2]
+      servo4Angle = english[rota][3]
+      servo5Angle = english[rota][4]
+      servo6Angle = english[rota][5]
     
-    if oldi != i:
-        servo1.value = servo1Angle
-        servo2.value = servo2Angle
-        servo3.value = servo3Angle
-        servo4.value = servo4Angle
-        servo5.value = servo5Angle
-        servo6.value = servo6Angle
+      duty_cycle = rotate_servo(servo1Angle)
+      pwm1.ChangeDutyCycle(duty_cycle)
+      duty_cycle = rotate_servo(servo2Angle)
+      pwm2.ChangeDutyCycle(duty_cycle)
+      duty_cycle = rotate_servo(servo3Angle)
+      pwm3.ChangeDutyCycle(duty_cycle)
+      duty_cycle = rotate_servo(servo4Angle)
+      pwm4.ChangeDutyCycle(duty_cycle)
+      duty_cycle = rotate_servo(servo5Angle)
+      pwm5.ChangeDutyCycle(duty_cycle)
+      duty_cycle = rotate_servo(servo6Angle)
+      pwm6.ChangeDutyCycle(duty_cycle)
+      
+    f = open('output1.txt','w')
+    f.write('{}'.format(i))
+    f.close()
 
-# Main Program
-GPIO.cleanup()
-GPIO.setmode(GPIO.BCM)
-
-GPIO.add_event_detect(fbPin, GPIO.RISING, callback=train_mode, bouncetime=200)
-GPIO.add_event_detect(bbPin, GPIO.RISING, callback=train_mode, bouncetime=200)
-GPIO.add_event_detect(testPin, GPIO.RISING, callback=train_mode, bouncetime=200)
-
-try:
-    while True:
-        sleep(0.1)
+# print(input1)
+  
 
 except KeyboardInterrupt:
-    GPIO.cleanup()
+  GPIO.cleanup()
+
+
+# GPIO.add_event_detect(fbPin, GPIO.RISING, callback=train_mode, bouncetime=200)
+# GPIO.add_event_detect(bbPin, GPIO.RISING, callback=train_mode, bouncetime=200)
+# GPIO.add_event_detect(testPin, GPIO.RISING, callback=train_mode, bouncetime=200)
