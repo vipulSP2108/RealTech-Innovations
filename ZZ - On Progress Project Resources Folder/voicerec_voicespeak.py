@@ -4,7 +4,7 @@ import os
 if __name__ == "__main__":
     # while True:
     r = sr.Recognizer()
-
+    
     with sr.Microphone() as source:
         r.adjust_for_ambient_noise(source)
         print('Please say')
