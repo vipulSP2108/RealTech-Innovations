@@ -1,34 +1,35 @@
-#include <wiringPi.h>
-#include <stdio.h>
-#include <string.h>
+int ledpin = 12;
+int time = 1000;
+// int offtime = 1000;
+String wordinputed;
 
-#define LED_PIN 1
-#define DELAY_TIME 1000
+void setup() {
+  Serial.begin(9600);
+}
 
-char wordinputed[256];
+void loop() {
+  // Serial.println(1);
+  while (!Serial.available() ==0) {}
+  wordinputed = Serial.readString();
+  Serial.println(wordinputed);
+  
+  int len = wordinputed.length();
+  Serial.println(len);
+  
+  // if (wordinputed == 'ASA'){
+  //   digitalWrite(ledpin, HIGH);
+  //   delay(5000);
+  //   digitalWrite(ledpin, LOW);
+  //   delay(1000);
+  // }
 
-int main(void) {
-  if (wiringPiSetup() == -1) {
-    printf("wiringPiSetup failed. Exiting...");
-    return 1;
+  for(int i=0; i<len; i++){
+    char h = wordinputed[i];
+    // digitalWrite(ledpin, HIGH);
+    // delay(2000);
+    // digitalWrite(ledpin, LOW);
+    // delay(1000);
+    Serial.println(h);
+    Serial.println(i);
   }
-
-  pinMode(LED_PIN, OUTPUT);
-
-  while(1) {
-    while (serialDataAvail(0) <= 0) { }
-    fgets(wordinputed, sizeof(wordinputed), stdin);
-    wordinputed[strcspn(wordinputed, "\r\n")] = 0; // Remove newline character
-
-    printf("%s\n", wordinputed);
-
-    if (strcmp(wordinputed, "ASA") == 0) {
-      digitalWrite(LED_PIN, HIGH);
-      delay(5000);
-      digitalWrite(LED_PIN, LOW);
-      delay(1000);
-    }
-  }
-
-  return 0;
 }
