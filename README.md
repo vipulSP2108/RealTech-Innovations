@@ -7,6 +7,11 @@ This document contains important information about this folder.
 
 The `sweep` file contains the source code and implementation file for each project. You can explore the code and use it as a reference or as a starting point for your own implementations.
 
+## Code (ToRunOn)
+
+The `ToRunOn` file contains the source code for running code on Python and getting more iterative experience. You can explore the code and use it as a reference or as a starting point for your own implementations. 
+#### If this file does not contain it, you can run code on Arduino or Raspberry Pi.
+
 ## Report
 
 The `report` file for each project is a written report in the standard IEEE format. The report includes schematics, diagrams, supporting materials, instructions, user manuals, technical specifications, project objectives, methodology, and key findings. You are encouraged to read the report to enhance your comprehension of the project and gain a deeper understanding of the project.
