@@ -10,7 +10,7 @@ The `sweep` file contains the source code and implementation file for each proje
 ## Code (ToRunOn)
 
 The `ToRunOn` file contains the source code for running code on Python and getting more iterative experience. You can explore the code and use it as a reference or as a starting point for your own implementations. 
-#### If this file does not contain it, you can run code on Arduino or Raspberry Pi.
+### If this file does not contain it, you can run code on Arduino or Raspberry Pi.
 
 ## Report
 
