@@ -16,6 +16,7 @@ servo3Angle = 0
 servo4Angle = 0
 servo5Angle = 0
 servo6Angle = 0
+servo6Angle = 0
 i = 0
 oldi = 0
 
